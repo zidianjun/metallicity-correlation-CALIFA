@@ -352,7 +352,7 @@ def analyze(gal_name):
             galaxy_figure.met_fluc_corr()
         
         
-        f = open(config.output_path + '/total_chain_' + gal_name + '.txt', 'w')
+        f = open(config.output_path + '/output/total_chain_' + gal_name + '.txt', 'w')
         for i in range(len(samples)):
             if i == 0:
                 f.write("%.3f" %(samples[i]))
