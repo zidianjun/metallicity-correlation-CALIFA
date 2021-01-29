@@ -1,1 +1,1 @@
-A repo containing figures of publication
+A repo containing figures of publication.
