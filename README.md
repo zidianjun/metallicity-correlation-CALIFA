@@ -2,7 +2,7 @@
 Metallicity correlations in CALIFA nearby galaxies
 
 The majority of the codes is galaxy_metallicity.py, possessing classes named after Galaxy and GalaxyFigure. The most time-consuming function is MCMC()
-. Typically it takes 1h for one galaxy. Thus, multi-process is highly recommended for looping all the 100 galaxies.
+. Typically it takes 40min - 1h for one galaxy (depends on the device). Thus, multi-processing is highly recommended for looping all the 100 galaxies.
 
 config.py has the essential parameters.
 
