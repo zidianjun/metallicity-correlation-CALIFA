@@ -16,12 +16,12 @@ Manual:
 
 4. Run the other python codes to get the figures in the publication.
 
-  4.1 Run "python scatter.py" to get Fig. 1 and Fig. 11.
+    4.1 Run "python scatter.py" to get Fig. 1 and Fig. 11.
   
-  4.2 Use the functions met_map() and met_fluc of GalaxyFigure to get Fig. 2.
+    4.2 Use the functions met_map() and met_fluc of GalaxyFigure to get Fig. 2.
   
-  4.3 Use the functions met_fluc_corr() and mcmc_plot() of GalaxyFigure to get Fig. 3 and Fig. 4.
+    4.3 Use the functions met_fluc_corr() and mcmc_plot() of GalaxyFigure to get Fig. 3 and Fig. 4.
   
-  4.4 Use the function corner.corner() in MCMC.py (defaulted as commented, use it by uncommenting) to get Fig. 5.
+    4.4 Use the function corner.corner() in MCMC.py (defaulted as commented, use it by uncommenting) to get Fig. 5.
   
-  4.5 Use the function thres_func() in main.py to get the "*galaxy_name*_thres.csv" file.
+    4.5 Use the function thres_func() in main.py to get the "*galaxy_name*_thres.csv" file.
