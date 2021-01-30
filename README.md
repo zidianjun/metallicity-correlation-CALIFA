@@ -24,4 +24,12 @@ Manual:
   
     4.4 Use the function corner.corner() in MCMC.py (defaulted as commented, use it by uncommenting) to get Fig. 5.
   
-    4.5 Use the function thres_func() in main.py to get the "*galaxy_name*\_thres.csv" dddddd
+    4.5 Use the function thres_func() in main.py to get the "*galaxy_name*\_thres.csv" files. Run "python thres.py" to get Fig. 6.
+    
+    4.6 Run "python test.py", "python corner.py", "python density.py", and "python vel_disp.py" to get Fig. 7 - 10.
+    
+    4.7 Use the function write_corr_scale() in main.py to get the "corr_scale.csv" file in ./output. Run "python corr_scale.py" to get Fig. 11.
+    
+    4.8 Set AGN_criterion = 'Kauffmann' and redo Step 1 - 3 to get the "correlation_length_Ka03.csv" file in ./output. Set suffix = '\_Ka03' and run "python lc_vs_lc.py" to get Fig. A1.
+    
+    4.9 Set adp_bin = True and redo Step 1 - 3 to get the "correlation_length_adp.csv" file in ./output. Set suffix = '\_adp' and run "python lc_vs_lc.py" to get Fig. B1.
