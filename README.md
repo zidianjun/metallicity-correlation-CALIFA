@@ -24,4 +24,4 @@ Manual:
   
     4.4 Use the function corner.corner() in MCMC.py (defaulted as commented, use it by uncommenting) to get Fig. 5.
   
-    4.5 Use the function thres_func() in main.py to get the "*galaxy_name*_thres.csv" file.
+    4.5 Use the function thres_func() in main.py to get the "*galaxy_name*\_thres.csv" dddddd
