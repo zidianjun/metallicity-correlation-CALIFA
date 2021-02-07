@@ -63,14 +63,16 @@ class Galaxy(object):
 
         self.name = gal_name
         self.min_pix, self.min_SN = min_pix, min_SN
+        
         obj_catalog = utils.read_CALIFA_catalog()
+
         Pipe3D = fits.open(config.fits_path + gal_name + '.Pipe3D.cube.fits')
         self.eline_data = Pipe3D[3].data
         channel, self.height, self.width = self.eline_data.shape
 
         FI_data = Pipe3D[1].data[3]  # flux intensity
         EBV_data = Pipe3D[1].data[11:13]  # dust attenuation
-        self.FI = np.squeeze(np.reshape(FI_data, [1, -1]))
+
         self.EBV = np.reshape(EBV_data, [2, -1]) / 3.2  # convert from attenuation to E(B-V)
         self.EW = np.squeeze(np.reshape(self.eline_data[198], [1, -1]))
 
@@ -99,7 +101,11 @@ class Galaxy(object):
 
             self.bin_rad, self.bin_met, self.bin_met_u = utils.bootstrap(
                 utils.bin_array, (self.met, self.met_u), (self.rad,))
-            
+            '''
+            met_grad, met_grad_u = utils.grad(self.bin_rad, self.bin_met, self.bin_met_u)
+            self.met_grad, self.met_grad_u = met_grad * Re, met_grad_u * Re
+            print self.met_grad, self.met_grad_u
+            '''
             self.fluc, self.fluc_u = utils.step(
                 self.rad, self.met, self.met_u,
                 self.bin_rad, self.bin_met, self.bin_met_u)
@@ -294,6 +300,7 @@ class GalaxyFigure(object):
                 height=self.g.height, width=self.g.width)
             plt.fill_between(dist, bin_ksi - bin_ksi_u, bin_ksi + bin_ksi_u,
                 color='b', alpha=.3, edgecolors='none')
+        #print np.sqrt(2 * utils.fit_sigma(dist, bin_ksi)[0][0] / self.g.kpc_per_pix) * 2.354
         
         plt.errorbar(self.g.bin_dist, self.g.bin_ksi, yerr=self.g.bin_ksi_u,
                      linestyle='none', marker='o', color='k', label='galaxy')
@@ -345,14 +352,14 @@ def analyze(gal_name):
         samples = galaxy.samples
         samples = np.squeeze(np.reshape(samples, [1, -1]))
 
-        
+        '''
         galaxy_figure = GalaxyFigure(galaxy, savefig_path=config.savefigs_path) #
         if samples[0] > 0:
             galaxy_figure.met_map()
             galaxy_figure.met_fluc_corr()
+        '''
         
-        
-        f = open(config.output_path + '/output/total_chain_' + gal_name + '.txt', 'w')
+        f = open(config.output_path + '/total_chain_' + gal_name + '.txt', 'w')
         for i in range(len(samples)):
             if i == 0:
                 f.write("%.3f" %(samples[i]))
@@ -384,4 +391,4 @@ def write_corr_scale(gal_name):
     f.close()
 
 
-Galaxy('NGC0873', 'K19N2O2')
+
