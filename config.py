@@ -10,7 +10,7 @@ output_path = proj_path + '/output/'
 
 # CALIFA columns
 eline_dict = {'OII3727': 0, 'OIII5007': 26, 'OIII4959': 27, 'Hbeta': 28,
-              'Halpha': 45, 'NII6584': 46, 'NII6549': 47, 'SII6717':49, 'SII6731': 50}
+              'Halpha': 45, 'NII6584': 46, 'NII6549': 47, 'SII6717': 49, 'SII6731': 50}
 
 diff = 204
 
