@@ -257,7 +257,7 @@ class GalaxyFigure(object):
         ax.set_ylabel('Metallicity', fontsize=30)
 
         ax = axes[1]
-        ax.errorbar(self.g.rad, self.g.fluc, yerr=self.g.met_u,
+        ax.errorbar(self.g.rad, self.g.fluc, yerr=self.g.fluc_u,
                      marker='.', linestyle='None', color='gray')
         ax.axhline(y=0., linestyle='--', color='k')
         ax.tick_params(axis='both', labelsize=30)
