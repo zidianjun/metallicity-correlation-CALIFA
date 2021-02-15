@@ -73,7 +73,7 @@ class Galaxy(object):
         FI_data = Pipe3D[1].data[3]  # flux intensity
         EBV_data = Pipe3D[1].data[11:13]  # dust attenuation
         
-        self.EBV = np.reshape(EBV_data, [2, -1]) / 3.2  # convert from attenuation to E(B-V)
+        self.EBV = np.reshape(EBV_data, [2, -1]) / 3.1  # convert from attenuation to E(B-V)
         self.EW = np.squeeze(np.reshape(self.eline_data[198], [1, -1]))
 
         PA, b2a, self.distance, PSF, Re = (obj_catalog[obj_catalog['name'] == gal_name].values)[0, 2:7]
