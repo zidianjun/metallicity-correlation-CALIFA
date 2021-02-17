@@ -74,7 +74,7 @@ class Galaxy(object):
         EBV_data = Pipe3D[1].data[11:13]  # dust attenuation
         
         self.EBV = np.reshape(EBV_data, [2, -1]) / 3.1  # convert from attenuation to E(B-V)
-        self.EW = np.squeeze(np.reshape(self.eline_data[198], [1, -1]))
+        self.EW = self.eline_data[198].reshape(-1)
 
         PA, b2a, self.distance, PSF, Re = (obj_catalog[obj_catalog['name'] == gal_name].values)[0, 2:7]
 
@@ -344,8 +344,7 @@ def analyze(gal_name):
 
     for diag in config.diag_list:
         galaxy = Galaxy(gal_name, diag)
-        samples = galaxy.samples
-        samples = np.squeeze(np.reshape(samples, [1, -1]))
+        samples = galaxy.samples.reshape(-1)
 
         
         galaxy_figure = GalaxyFigure(galaxy, savefig_path=config.savefigs_path) #

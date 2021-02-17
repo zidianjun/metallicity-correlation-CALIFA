@@ -50,7 +50,7 @@ def deproject(height, width, y_c, x_c, PA, b2a, q0=config.q0):
                         [-np.sin(theta) / cosi, np.cos(theta) / cosi]])
     
     x0, y0 = np.meshgrid(range(width), range(height))
-    x0, y0 = np.squeeze(np.reshape(x0, [1, -1])), np.squeeze(np.reshape(y0, [1, -1]))
+    x0, y0 = x0.reshape(-1), y0.reshape(-1)
     xy_mat = np.stack([x0 - x_c, y0 - y_c], axis=0)
     X, Y = np.dot(dep_mat, xy_mat)
     return (X, Y)
@@ -84,8 +84,8 @@ def two_point_correlation(f, x, y, bin_size=.2, short=20):
     DX, DY = np.subtract.outer(x, x), np.subtract.outer(y, y)
     DIST = np.sqrt(DX ** 2 + DY ** 2)
 
-    scorr = np.squeeze(np.reshape(SCORR, [1, -1]))
-    dist = np.squeeze(np.reshape(DIST, [1, -1]))
+    scorr = SCORR.reshape(-1)
+    dist = DIST.reshape(-1)
     mean2, sigma2 = np.mean(f) ** 2, np.std(f) ** 2 # mean is 0
     
     stat = binned_statistic(dist, scorr, bins=np.arange(0, max(dist) + bin_size, bin_size))

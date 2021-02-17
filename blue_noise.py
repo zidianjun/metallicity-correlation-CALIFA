@@ -16,9 +16,9 @@ def gen_blue_noise(mask, kpc_per_pix, beam, height=73, width=78, fsc=5):
     noise = GaussianBlur(np.random.normal(0, 1, (width * fsc, height * fsc)),
                          (15, 15), beam[0] / kpc_per_pix * fsc)[::fsc, ::fsc]
     y, x = np.meshgrid(np.arange(height), np.arange(width))
-    return (np.squeeze(np.reshape(noise, [1, -1]))[mask],
-    	    np.squeeze(np.reshape(x, [1, -1]))[mask] * kpc_per_pix,
-    	    np.squeeze(np.reshape(y, [1, -1]))[mask] * kpc_per_pix)
+    return (noise.reshape(-1)[mask],
+    	    x.reshape(-1)[mask] * kpc_per_pix,
+    	    y.reshape(-1)[mask] * kpc_per_pix)
 
 def gen_blue_noise_band(mask, kpc_per_pix, beam, height=73, width=78, times=10):
     ksi_b = None
