@@ -30,8 +30,8 @@ Manual:
     
     4.7 Use the function write_corr_scale() in main.py to get the "corr_scale.csv" file in ./output. Run "python corr_scale.py" to get Fig. 12.
     
-    4.8 Set AGN_criterion = 'Kauffmann' and redo Step 1 - 3 to get the "correlation_length_Ka03.csv" file in ./output. Run "python lc_vs_lc.py --suffix='Ka03'" to get Fig. A1.
+    4.8 Set AGN_criterion = 'Kauffmann' and redo Step 1 - 3 to get the "correlation_length_Ka03.csv" file in ./output. Run "python lc_vs_lc.py --suffix='Ka03' " to get Fig. A1.
     
-    4.9 Set decomposition = 'MA17' and redo Step 1 - 3 to get the "correlation_length_MA17.csv" file in ./output. Run "python lc_vs_lc.py --suffix='MA17'" to get Fig. B1. Run "python decom.py" to get Fig. B2.
+    4.9 Set decomposition = 'MA17' and redo Step 1 - 3 to get the "correlation_length_MA17.csv" file in ./output. Run "python lc_vs_lc.py --suffix='MA17' " to get Fig. B1. Run "python decom.py" to get Fig. B2.
     
-    5.0 Set adp_bin = True and redo Step 1 - 3 to get the "correlation_length_adp.csv" file in ./output. Run "python lc_vs_lc.py --suffix='adp'" to get Fig. C1.
+    5.0 Set adp_bin = True and redo Step 1 - 3 to get the "correlation_length_adp.csv" file in ./output. Run "python lc_vs_lc.py --suffix='adp' " to get Fig. C1.
