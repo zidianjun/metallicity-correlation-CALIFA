@@ -71,9 +71,9 @@ def MCMC(x, y, yerr, beam):
     plt.savefig(config.savefig_path + '/corner.pdf')
     '''
 
-    print np.percentile(flat_samples, 50, axis=0)
-    print np.percentile(flat_samples, 16, axis=0)
-    print np.percentile(flat_samples, 84, axis=0)
+    print(np.percentile(flat_samples, 50, axis=0))
+    print(np.percentile(flat_samples, 16, axis=0))
+    print(np.percentile(flat_samples, 84, axis=0))
     
     return samples[-config.n_sample:, :, :], np.percentile(flat_samples, 50, axis=0)
     

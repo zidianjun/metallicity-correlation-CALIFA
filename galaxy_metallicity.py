@@ -59,7 +59,7 @@ class Galaxy(object):
     def __init__(self, gal_name, diag,
                  min_pix=config.min_pix, min_SN=config.min_SN):
         time0 = time.time()
-        print "Start analyzing " + gal_name + " with " + diag + " diagnostics."
+        print("Start analyzing " + gal_name + " with " + diag + " diagnostics.")
 
         self.name = gal_name
         self.min_pix, self.min_SN = min_pix, min_SN
@@ -89,14 +89,14 @@ class Galaxy(object):
         X, Y = utils.deproject(self.height, self.width, c_y, c_x, PA, b2a, q0=0.)
 
         self.kpc_per_pix = self.distance * constant.kpc_per_Mpc
-        print "1 pixel is %.3fkpc" %(self.kpc_per_pix)
+        print("1 pixel is %.3fkpc" %(self.kpc_per_pix))
         self.beam = (PSF / np.sqrt(np.log(256)) * self.kpc_per_pix,
                      config.error_PSF / np.sqrt(np.log(256)) * self.kpc_per_pix)
 
         self.diag = diag
         met, met_u, mask = self.metallicity(self.diag)
         self.mask, self.mask_num = mask, np.sum(mask)
-        print "%d pixels left" %(self.mask_num)
+        print("%d pixels left" %(self.mask_num))
         
         if self.mask_num > self.min_pix:
 
@@ -126,7 +126,7 @@ class Galaxy(object):
             self.par = np.ones(4)
         
         time1 = time.time()
-        print "Initialization time: %.3fs." %(time1 - time0)
+        print("Initialization time: %.3fs." %(time1 - time0))
     
     
     def pixel(self, y, x):
@@ -188,7 +188,7 @@ class Galaxy(object):
         elif c == 'Kauffmann':
             return ((O < 0.61 / (N - 0.05) + 1.30))
         else:
-            print "AGN criterion must be either 'Kewley' or 'Kauffmann'!"
+            print("AGN criterion must be either 'Kewley' or 'Kauffmann'!")
             return False
 
     def mask_EW(self, c=config.EW_criterion):
@@ -302,7 +302,6 @@ class GalaxyFigure(object):
                 height=self.g.height, width=self.g.width)
             plt.fill_between(dist, bin_ksi - bin_ksi_u, bin_ksi + bin_ksi_u,
                 color='b', alpha=.3, edgecolors='none')
-        #print np.sqrt(2 * utils.fit_sigma(dist, bin_ksi)[0][0] / self.g.kpc_per_pix) * 2.354
         
         plt.errorbar(self.g.bin_dist, self.g.bin_ksi, yerr=self.g.bin_ksi_u,
                      linestyle='none', marker='o', color='k', label='galaxy')

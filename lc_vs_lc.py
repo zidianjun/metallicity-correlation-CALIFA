@@ -16,8 +16,8 @@ def bootstrap(suffix, dh=DataHub(), times=50):
     for i in range(times):
         l1, l2 = dh.rand_corr_len(), dh.rand_corr_len(suffix='_'+suffix)
         pr.append(pearsonr(np.log10(l1), np.log10(l2))[0])
-        print i
-    print np.mean(pr), np.std(pr)
+        print(i)
+    print(np.mean(pr), np.std(pr))
 
 parser = ap.ArgumentParser(description="Please name the suffix.")
 parser.add_argument("--suffix")
@@ -29,11 +29,8 @@ lcorr2 = pd.read_csv(config.output_path + '/correlation_length_' + suffix + '.cs
 
 dh = DataHub()
 
-l1_50, l1_16, l1_84 = lcorr1.l_50[dh.mask], lcorr1.l_16[dh.mask], lcorr1.l_84[dh.mask]
-if suffix == 'decom':
-    l2_50, l2_16, l2_84 = lcorr2.l_50, lcorr2.l_16, lcorr2.l_84
-else:
-    l2_50, l2_16, l2_84 = lcorr2.l_50[dh.mask], lcorr2.l_16[dh.mask], lcorr2.l_84[dh.mask]
+l1_50, l1_16, l1_84 = lcorr1.l_50, lcorr1.l_16, lcorr1.l_84
+l2_50, l2_16, l2_84 = lcorr2.l_50, lcorr2.l_16, lcorr2.l_84
 
 x = np.arange(.01, 10, .01)
 

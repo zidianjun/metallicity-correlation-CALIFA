@@ -104,7 +104,7 @@ def bootstrap(func, bootstrap_args, fixed_args, times=20):
         x, value = func(bootstrap_value, *fixed_args)
         value = np.expand_dims(value, axis=0)
         value_b = np.concatenate((value_b, value), axis=0) if value_b is not None else value
-        #print "Bootstrap for %s #%d finished." %(func.__name__, time)
+        #print("Bootstrap for %s #%d finished." %(func.__name__, time))
     value_b_mean = np.mean(value_b, axis=0)
     value_b_std = np.std(value_b, axis=0)
     return x, value_b_mean, value_b_std

@@ -26,7 +26,7 @@ def gen_blue_noise_band(mask, kpc_per_pix, beam, height=73, width=78, times=10):
                                                        height=height, width=width))
         ksi = np.expand_dims(ksi, axis=0)
         ksi_b = np.concatenate((ksi_b, ksi), axis=0) if ksi_b is not None else ksi
-        print "Bootstrap for blue noise #%d finished." %(time)
+        print("Bootstrap for blue noise #%d finished." %(time))
     ksi_b_mean = np.mean(ksi_b, axis=0)
     ksi_b_std = np.std(ksi_b, axis=0)
     return x, ksi_b_mean, ksi_b_std

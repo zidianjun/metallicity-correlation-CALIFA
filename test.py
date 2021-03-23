@@ -15,9 +15,8 @@ def bootstrap(dh=DataHub(), times=50):
     for i in range(times):
         y = dh.rand_corr_len() / dh.col('dist') / constant.kpc_per_Mpc
         pr.append(pearsonr(np.log10(x), np.log10(y))[0])
-        print i
-    print np.mean(pr)
-    print np.std(pr)
+        print(i)
+    print(np.mean(pr), np.std(pr))
 
 
 dh = DataHub()

@@ -5,7 +5,7 @@ from utils import read_CALIFA_catalog
 
 import numpy as np
 import matplotlib.pyplot as plt
-#plt.switch_backend('agg')
+plt.switch_backend('agg')
 
 def panel1(dh=DataHub()):
     plt.figure(figsize=(10, 10))
@@ -26,7 +26,7 @@ def panel1(dh=DataHub()):
     plt.xlabel('distance (Mpc)', fontsize=30)
     plt.ylabel('$\mathrm{R}_{25}$ (kpc)', fontsize=30)
     
-    #plt.savefig(config.savefig_path + 'R_25.pdf')
+    plt.savefig(config.savefig_path + 'R_25.pdf')
 
 def panel2(dh=DataHub()):
     g = read_CALIFA_catalog()
@@ -89,7 +89,7 @@ def panel2(dh=DataHub()):
     ax_histy.set_xlabel('Normalised\ndistribution', fontsize=30)
     ax_histy.tick_params(axis='x', labelsize=30)
 
-    #plt.savefig(config.savefig_path + '/hist_Mass_SFR.pdf')
+    plt.savefig(config.savefig_path + '/hist_Mass_SFR.pdf')
 
 
 
@@ -162,11 +162,15 @@ def panel3(dh=DataHub()):
     ax_histy.set_xlabel('Normalised\ndistribution', fontsize=30)
     ax_histy.tick_params(axis='x', labelsize=30)
 
-    #plt.savefig(config.savefig_path + '/hist_Mass_R.pdf')
+    plt.savefig(config.savefig_path + '/hist_Mass_R.pdf')
 
 
 
 panel1()
 panel2()
 panel3()
-plt.show()
+#plt.show()
+
+
+
+
