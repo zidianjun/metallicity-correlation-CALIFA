@@ -15,10 +15,10 @@ def read_output(name, full_chain):
             np.sqrt(np.percentile(L, 84, axis=1)[0]))
 
 
-f = open(config.output_path + '/correlation_length_decom.csv', 'w')
+f = open(config.output_path + '/correlation_length.csv', 'w')
 f.write('name,l_50,l_16,l_84\n')
 
-fc = open(config.output_path + '/total_chain_K19N2O2_decom.txt', 'r')
+fc = open(config.output_path + '/total_chain_K19N2O2.txt', 'r')
 
 for line in fc.readlines():
     name = line[:line.index(' ')]
