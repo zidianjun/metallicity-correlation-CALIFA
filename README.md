@@ -32,6 +32,6 @@ Manual:
     
     4.8. Set AGN_criterion = 'Kauffmann' and redo Step 1 - 3 to get the "correlation_length_Ka03.csv" file in ./output. Run "python lc_vs_lc.py --suffix='Ka03' " to get Fig. A1.
     
-    4.9. Set decomposition = 'MA17' and redo Step 1 - 3 to get the "correlation_length_MA17.csv" file in ./output. Run "python lc_vs_lc.py --suffix='MA17' " to get Fig. B1. Run "python decom.py" to get Fig. B2.
+    4.9. Set decomposition = 'decom' and redo Step 1 - 3 to get the "correlation_length_MA17.csv" file in ./output. Run "python lc_vs_lc.py --suffix='MA17' " to get Fig. B1. Run "python decom.py" to get Fig. B2.
      
     4.10. Set adp_bin = True and redo Step 1 - 3 to get the "correlation_length_adp.csv" file in ./output. Run "python lc_vs_lc.py --suffix='adp' " to get Fig. C1.
