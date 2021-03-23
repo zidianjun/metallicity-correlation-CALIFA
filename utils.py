@@ -45,7 +45,7 @@ def deproject(height, width, y_c, x_c, PA, b2a, q0=config.q0):
     Deproject the galaxy coordinates using rotation matrix.
     '''
     cosi = np.sqrt((b2a ** 2 - q0 ** 2) / (1 - q0 ** 2)) if b2a > q0 else 0.
-    theta = PA * np.pi / 180
+    theta = (PA + 90) * np.pi / 180
     dep_mat = np.array([[np.cos(theta), np.sin(theta)],
                         [-np.sin(theta) / cosi, np.cos(theta) / cosi]])
     
@@ -79,19 +79,21 @@ def step(rad, met, met_u, bin_rad, bin_met, bin_met_u):
     fluc_u = np.sqrt(met_u ** 2 + bin_met_u[y] ** 2)
     return fluc, fluc_u
 
-def two_point_correlation(f, x, y, bin_size=.2, short=20):
+def two_point_correlation(f, x, y, bin_size=.015, max_kpc=4.):
     SCORR = np.outer(f, f)
     DX, DY = np.subtract.outer(x, x), np.subtract.outer(y, y)
     DIST = np.sqrt(DX ** 2 + DY ** 2)
 
     scorr = SCORR.reshape(-1)
     dist = DIST.reshape(-1)
+    short = dist < max_kpc
+
     mean2, sigma2 = np.mean(f) ** 2, np.std(f) ** 2 # mean is 0
     
-    stat = binned_statistic(dist, scorr, bins=np.arange(0, max(dist) + bin_size, bin_size))
+    stat = binned_statistic(dist[short], scorr[short], bins=np.arange(0, max(dist) + bin_size, bin_size))
     mask = ~np.isnan(stat.statistic)
-    bin_d = stat.bin_edges[:-1][mask][:short]
-    bin_s = (stat.statistic[mask][:short] - mean2) / sigma2
+    bin_d = stat.bin_edges[:-1][mask]
+    bin_s = (stat.statistic[mask] - mean2) / sigma2
 
     return bin_d, bin_s
 

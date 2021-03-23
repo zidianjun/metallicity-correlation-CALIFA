@@ -5,7 +5,7 @@ from post_process import DataHub
 
 import numpy as np
 import matplotlib.pyplot as plt
-plt.switch_backend('agg')
+#plt.switch_backend('agg')
 from scipy.stats import pearsonr
 
 def bootstrap(dh=DataHub(), times=50):
@@ -34,24 +34,25 @@ plt.subplots(figsize=(10, 10))
 ax = plt.subplot(111)
 ax.set_xscale("log")
 ax.set_yscale("log")
-x = np.arange(.1, 10)
-plt.plot(x, x, color='gray', linestyle='--')
-plt.xlim(.8, 5)
-plt.ylim(.1, 30)
-plt.xlabel('$\lambda_{\mathrm{beam}}$ (arcsec)', fontsize=20)
-plt.ylabel('$\lambda_{\mathrm{corr}}$ (arcsec)', fontsize=20)
-x_ticks = [0.8, 0.9, 1.0, 2.0, 3.0, 4.0]
-plt.xticks(x_ticks, x_ticks, fontsize=20)
+x = np.arange(.8, 5., .01)
+ax.plot(x, x, color='gray', linestyle='--')
+ax.set_xlim(.8, 5)
+ax.set_ylim(.1, 30)
+ax.set_xlabel('$\lambda_{\mathrm{beam}}$ (arcsec)', fontsize=20)
+ax.set_ylabel('$\lambda_{\mathrm{corr}}$ (arcsec)', fontsize=20)
+x_ticks = [0.8, 0.9, 1.0, 2.0, 3.0, 4.0, 5.0]
+ax.set_xticks(x_ticks)
+ax.set_xticklabels(x_ticks)
 y_ticks = [0.2, 0.4, 0.6, 0.8, 1.0, 2.0, 4.0, 6.0, 8.0, 10.0, 20.0]
-plt.yticks(y_ticks, y_ticks, fontsize=20)
-plt.yticks(fontsize=20)
+ax.set_yticks(y_ticks)
+ax.set_yticklabels(y_ticks)
+ax.tick_params(axis='both', labelsize=20)
 
-plt.vlines(X0, Y_lower0, Y_upper0, color='k', linewidth=2)
-plt.scatter(X0, Y0, color='w', edgecolor='k', s=150)
-print pearsonr(np.log10(X0), np.log10(Y0))[0]
+ax.scatter(X0, Y0, color='w', edgecolor='k', s=150)
+ax.vlines(X0, Y_lower0, Y_upper0, color='gray', linewidth=2)
 
-bootstrap()
+#bootstrap()
 
-plt.savefig(config.savefig_path + 'beam_size.pdf')
-#plt.show()
+#plt.savefig(config.savefig_path + 'beam_size.pdf')
+plt.show()
 

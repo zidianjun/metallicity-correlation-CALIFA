@@ -16,9 +16,8 @@ line_rest_wavelength_dict = {
 	'SII6731': 6732.674
 }
 
-# Ionization parameter calibrations
+
 coeff_logOH_N2O2 = [9.4774, 1.1789, 0.5092, 0.6867, 0.2814, 0.1617, 0.1184, 0.1202, 0.2292, 0.0165]
-coeff_logOH_O3N2 = [10.312, -1.6575, 2.2525, -1.3549, 0.4764, 1.1730, -0.2968, 0.1974, -0.0544, 0.1891]
 
 intr_PPN2_error = 0.021
 intr_PPO3N2_error = 0.012

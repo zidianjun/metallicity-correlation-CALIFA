@@ -2,19 +2,32 @@
 import numpy as np
 from scipy.integrate import quad
 from scipy.special import jv
+from scipy.interpolate import interp2d
 import config
 import emcee
 #import matplotlib.pyplot as plt
 #plt.switch_backend('agg')
 #import corner
 
-def KT18(x_array, sigma, x0, KappaTstar):
-    return 2. / np.log(1 + 2*KappaTstar/(sigma**2/2+x0**2)) * np.array([quad(lambda a: np.exp(-(sigma**2/2+x0**2) * a**2) *
-           (1 - np.exp(-2*KappaTstar * a**2)) * jv(0, a*x)/a, 0, np.inf)[0] for x in x_array])
+
+def KT18(alpha, beta):
+    return (2. / np.log(1 + beta / alpha) * quad(lambda x:
+            np.exp(-alpha * x**2) * (1 - np.exp(-beta * x**2)) * jv(0, x)/x, 0, np.inf)[0])
+
+def KT18_model(x_array, sigma, x0, KappaTstar):
+    res = []
+    for x in x_array:
+        alpha = (sigma ** 2 / 2 + x0 ** 2) / x ** 2
+        beta = 2 * KappaTstar / x ** 2
+        if -12 < np.log(alpha) < 6 and -12 < np.log(beta) < 14:
+            res.append(KT18(alpha, beta))
+        else:
+            res.append(np.inf)
+    return np.array(res)
 
 def log_likelihood(theta, x, y, yerr):
     sigma, x0, KappaTstar, f = theta
-    model = KT18(x, sigma, x0, KappaTstar)
+    model = KT18_model(x, sigma, x0, KappaTstar)
     log_prob = -.5 * np.sum((y - model / f) ** 2 / yerr ** 2 + np.log(yerr ** 2))
     return log_prob
 

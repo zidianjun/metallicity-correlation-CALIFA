@@ -55,13 +55,16 @@ plt.plot(x, np.sqrt(1e-3/3*180*x*2), color='k', linestyle='-.',
          label='scale height = 180pc, SF duration = 2Gyr')
 plt.plot(x, np.sqrt(1e-3/3*80*x*1), color='k', linestyle=':',
          label='scale height = 80pc,   SF duration = 1Gyr')
-plt.legend(loc='upper left')
+plt.legend(loc='upper left', prop={'size': 15})
+#plt.annotate('scale length = 250pc\nSF duration = 5Gyr', xy=(30, 4), xytext=(30, 4))
+#plt.annotate('scale length = 50pc\nSF duration = 5Gyr', xy=(30, 2), xytext=(30, 2))
+#plt.annotate('scale length = 50pc\nSF duration = 1Gyr', xy=(30, .8), xytext=(30, .8))
 
 
 plt.xlim(0, 40)
 plt.ylim(0.1, 10)
 
-plt.xlabel('CO velocity dispersion (km/s)', fontsize=20)
+plt.xlabel('CO velocity dispersion (km s$^{-1}$)', fontsize=20)
 plt.ylabel('Correlation length (kpc)', fontsize=20)
 plt.xticks(fontsize=20)
 plt.yticks(fontsize=20)

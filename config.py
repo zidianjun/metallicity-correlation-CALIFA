@@ -1,6 +1,6 @@
 
 # data path
-proj_path = './'
+proj_path = '/Users/zidianjun/Desktop/lzf/research/met_CALIFA/'
 #proj_path = '/home/liz/project/metallicity/'
 obj_path = proj_path + '/data/'
 fits_path = proj_path + '/data/fits/'

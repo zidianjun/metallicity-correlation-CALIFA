@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 from scipy.stats import pearsonr
 
-def bootstrap(d1, d2, times=50):
+def bootstrap(d1, d2, times=20):
     xdata, ydata = [], []
     pr = []
     dh = DataHub()
@@ -19,8 +19,8 @@ def bootstrap(d1, d2, times=50):
         l2 = dh.rand_corr_len(diag=d2)
         ydata = np.append(ydata, l2)
         pr.append(pearsonr(np.log10(l1), np.log10(l2))[0])
-        print i
-    print np.mean(pr), np.std(pr)
+        print(i)
+    print(np.mean(pr), np.std(pr))
     return xdata, ydata
 
 def hist2d(xdata, ydata):
@@ -59,16 +59,16 @@ def corner(d1, d2, num, dh=DataHub()):
     
     X, Y = bootstrap(d1, d2)
     fig = hist2d(X, Y)
-    '''
+    
     if num == 1:
         cbar = plt.colorbar(fig)
         cbar.set_label('log probability density', size=20)
         cbar.ax.tick_params(labelsize=20)
-    '''
+    
     x = np.arange(-.2, 1e2)
     plt.plot(x, x, color='gray', linestyle='--')
     
-    print '     '
+    print('     ')
 
 plt.subplots(figsize=(10, 10))
 
@@ -76,7 +76,7 @@ corner('PPN2', 'PPO3N2', 1)
 corner('PPN2', 'K19N2O2', 3)
 corner('PPO3N2', 'K19N2O2', 4)
 
-plt.savefig(config.savefig_path + 'figure_1.pdf')
+plt.savefig(config.savefig_path + 'cbar_corner.pdf')
 #plt.show()
 
     

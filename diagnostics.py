@@ -100,6 +100,92 @@ def K19N2O2(galaxy):
     mask = mask & (met > 7.63) & (met < 9.23)
     return (met, np.sqrt(met_u ** 2 + constant.intr_N2O2_error ** 2), mask)
 
+'''
+def interpolate(O32, met, matrix):
+    met_array = matrix[:, 1]
+    logq_array = np.array([np.poly1d(coeff)(O32) for coeff in matrix[:, 2:6]])
+    n, s = split_uf_array(logq_array) # O32 is ufloat, thus splitting the array
+    interp_func = interp1d(met_array, n)
+    return ufloat(interp_func(met.n), np.nanmean(s))
+
+def iteration_logPk(O32, line_ratio, logPk, coeff_logOH=constant.coeff_logOH_N2O2):
+    O32_table = np.loadtxt('./O32_coeff_vs_Z.txt')
+    O32_matrix = O32_table[O32_table[:, 0] == logPk]
+
+    init_met, current_met = ufloat(9., 0.), ufloat(8., 0.)
+    count = 0
+    while abs(current_met - init_met) > .001:
+        if count > 50:
+            return ufloat(0., 0.)
+        if current_met > 9.23 or current_met < 7.63:
+            return ufloat(0., 0.)
+
+        init_met = current_met
+        logU = interpolate(O32, init_met, O32_matrix) - np.log10(3e10)
+        x = line_ratio
+        y = logU
+        xy = [1, x, y, x*y, x**2, y**2, x*y**2, y*x**2, x**3, y**3]
+        current_met = np.inner(coeff_logOH, xy)
+        current_met = ufloat(current_met.n, current_met.s) # change the datatype to Variable
+        count += 1
+    return current_met
+
+def iteration_logq(x, y, lower=True):
+    init_met = ufloat(9., 0.)
+    current_met = ufloat(8.2, 0.) if lower else ufloat(8.7, 0.)
+    count = 0
+    while abs(current_met - init_met) > .001:
+        if count > 50:
+            return ufloat(0., 0.), logq
+
+        init_met = current_met
+        numerator = 32.81 - 1.153*y**2 + init_met*(-3.396 - 0.025*y + 0.1444*y**2)
+        denominator = 4.603 - 0.3119*y - 0.163*y**2 + init_met*(-0.48 + 0.0271*y + 0.02037*y**2)
+        logq = numerator / denominator
+        if lower:
+            current_met = 9.40 + 4.65*x - 3.17*x**2 - logq*(0.272 + 0.547*x - 0.513*x**2)
+        else:
+            current_met = 9.72 - 0.777*x - 0.951*x**2 - 0.072*x**3 - 0.811*x**4 - logq*(
+                          0.0737 - 0.0713*x - 0.141*x**2 + 0.0373*x**3 - 0.058*x**4)
+        count += 1
+    return current_met, logq
+
+def KK04(galaxy):
+    O32_array = unp.log10(galaxy.ratio(['OIII5007'], ['OII3727']))
+    R23_array = unp.log10(galaxy.ratio(['OII3727', 'OIII4959', 'OIII5007'], ['Hbeta']))
+    N2O2_array = unp.log10(galaxy.ratio(['NII6584'], ['OII3727']))
+    mask = (galaxy.mask_line_flux(['OIII5007', 'OII3727', 'OIII4959', 'NII6584', 'Hbeta']) &
+            galaxy.mask_AGN() & galaxy.mask_EW())
+
+    metallicity = np.array([ufloat(0., 0.)]*len(O32_array))
+    for index in range(len(O32_array)):
+        if mask[index]:
+            metallicity[index], logq = iteration_logq(R23_array[index], O32_array[index],
+                                                      lower=(N2O2_array[index] < -1.2))
+
+    met, met_u = split_uf_array(metallicity)
+    return (met, met_u, mask & (metallicity > 0.))
+
+def K19N2O2_it(galaxy):
+    O32_array = unp.log10(galaxy.ratio(['OIII4959', 'OIII5007'], ['OII3727']))
+    N2O2_array = unp.log10(galaxy.ratio(['NII6584'], ['OII3727']))
+    sulfur_ratio = np.nanmean(galaxy.ratio(['SII6717'], ['SII6731']))
+    
+    S_P_table = np.loadtxt('./sulfur_ratio_vs_pressure.txt')
+    minimum = min(abs(S_P_table[:, 1] - sulfur_ratio))
+    logPk = S_P_table[abs(S_P_table[:, 1] - sulfur_ratio) == minimum][0, 0]
+
+    mask = (galaxy.mask_line_flux(['OIII4959', 'OIII5007', 'OII3727', 'NII6584']) &
+            galaxy.mask_AGN() & galaxy.mask_EW())
+    met = np.array([ufloat(0., 0.)]*len(O32_array))
+    for index in range(len(O32_array)):
+        if mask[index]:
+            met[index] = iteration_logPk(O32_array[index], N2O2_array[index], logPk)
+    met, met_u = split_uf_array(met)
+    mask = mask & (met > 7.63) & (met < 9.23)
+    return (met, np.sqrt(met_u ** 2 + constant.intr_N2O2_error ** 2), mask)
+'''
+
 
 
 

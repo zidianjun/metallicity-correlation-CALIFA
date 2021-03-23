@@ -4,7 +4,7 @@ import config
 import utils
 
 from blue_noise import gen_blue_noise_band
-from MCMC import MCMC, KT18
+from MCMC import MCMC, KT18_model
 import diagnostics
 
 from astropy.io import fits
@@ -63,25 +63,28 @@ class Galaxy(object):
 
         self.name = gal_name
         self.min_pix, self.min_SN = min_pix, min_SN
-
         obj_catalog = utils.read_CALIFA_catalog()
-
         Pipe3D = fits.open(config.fits_path + gal_name + '.Pipe3D.cube.fits')
         self.eline_data = Pipe3D[3].data
         channel, self.height, self.width = self.eline_data.shape
 
-        FI_data = Pipe3D[1].data[3]  # flux intensity
-        EBV_data = Pipe3D[1].data[11:13]  # dust attenuation
-        
-        self.EBV = np.reshape(EBV_data, [2, -1]) / 3.1  # convert from attenuation to E(B-V)
+        FI_data = Pipe3D[1].data[3] # flux intensity
+        EBV_data = Pipe3D[1].data[11:13] # dust attenuation
+        self.EBV = np.reshape(EBV_data, [2, -1]) / 3.2 # convert from attenuation to E(B-V)
         self.EW = self.eline_data[198].reshape(-1)
 
-        PA, b2a, self.distance, PSF, Re = (obj_catalog[obj_catalog['name'] == gal_name].values)[0, 2:7]
+        PA, b2a, self.distance, PSF, R_25 = (obj_catalog[obj_catalog['name'] == gal_name].values)[0, 2:7]
+        if gal_name in ['NGC0523', 'UGC04245', 'UGC08107', 'UGC09113', 'NGC7364']:
+            pass
+        else:
+            decom = utils.read_CALIFA_catalog(name='decom.csv')
+            ind = (decom.name == gal_name)
+            b2a, _, PA = (decom[decom['name'] == gal_name].values)[0, 1:4]
 
         ic_y, ic_x = int(self.height / 2), int(self.width / 2)
         c_y, c_x = utils.find_max(FI_data, y_range=(ic_y-7, ic_y+7), x_range=(ic_x-8, ic_x+8))
 
-        X, Y = utils.deproject(self.height, self.width, c_y, c_x, PA, b2a)
+        X, Y = utils.deproject(self.height, self.width, c_y, c_x, PA, b2a, q0=0.)
 
         self.kpc_per_pix = self.distance * constant.kpc_per_Mpc
         print "1 pixel is %.3fkpc" %(self.kpc_per_pix)
@@ -101,7 +104,11 @@ class Galaxy(object):
 
             self.bin_rad, self.bin_met, self.bin_met_u = utils.bootstrap(
                 utils.bin_array, (self.met, self.met_u), (self.rad,))
-            
+            '''
+            met_grad, met_grad_u = utils.grad(self.bin_rad, self.bin_met, self.bin_met_u)
+            self.met_grad, self.met_grad_u = met_grad * R_25, met_grad_u * R_25
+            print self.met_grad, self.met_grad_u
+            '''
             self.fluc, self.fluc_u = utils.step(
                 self.rad, self.met, self.met_u,
                 self.bin_rad, self.bin_met, self.bin_met_u)
@@ -215,7 +222,7 @@ class GalaxyFigure(object):
 
     def met_map(self):
         plt.subplots(figsize=(12, 9))
-        fig = plt.scatter(self.g.x, self.g.y, c=self.g.met,
+        fig = plt.scatter(self.g.x, self.g.y, c=self.g.met, vmin=8.4, vmax=9.2,
                           s=75, alpha=0.75, edgecolors='face', marker='o', cmap=self.cmap)
         cbar = plt.colorbar(fig)
         cbar.set_label('Metallicity', size=30)
@@ -255,9 +262,10 @@ class GalaxyFigure(object):
                      marker='o', linestyle='None', color='k')
         ax.tick_params(axis='both', labelsize=30)
         ax.set_ylabel('Metallicity', fontsize=30)
+        ax.set_ylim(8.4, 9.2)
 
         ax = axes[1]
-        ax.errorbar(self.g.rad, self.g.fluc, yerr=self.g.fluc_u,
+        ax.errorbar(self.g.rad, self.g.fluc, yerr=self.g.met_u,
                      marker='.', linestyle='None', color='gray')
         ax.axhline(y=0., linestyle='--', color='k')
         ax.tick_params(axis='both', labelsize=30)
@@ -296,6 +304,7 @@ class GalaxyFigure(object):
                 height=self.g.height, width=self.g.width)
             plt.fill_between(dist, bin_ksi - bin_ksi_u, bin_ksi + bin_ksi_u,
                 color='b', alpha=.3, edgecolors='none')
+        #print np.sqrt(2 * utils.fit_sigma(dist, bin_ksi)[0][0] / self.g.kpc_per_pix) * 2.354
         
         plt.errorbar(self.g.bin_dist, self.g.bin_ksi, yerr=self.g.bin_ksi_u,
                      linestyle='none', marker='o', color='k', label='galaxy')
@@ -323,7 +332,7 @@ class GalaxyFigure(object):
             rs = np.random.randint(config.n_sample)
             rw = np.random.randint(config.n_walker)
             par = self.g.samples[rs, rw]
-            plt.plot(np.append([0], x), np.append([1], KT18(x, *par[:3]) / par[3]),
+            plt.plot(np.append([0], x), np.append([1], KT18_model(x, *par[:3]) / par[3]),
                      color='orange', alpha=.3)
 
         plt.xlim(-.1, 3.6)
@@ -337,23 +346,76 @@ class GalaxyFigure(object):
         if self.savefig_path is not None:
             plt.savefig(self.savefig_path + '/' + self.g.name + '_' + self.g.diag + '_curves.pdf')
 
+    def example(self):
+        plt.figure(figsize=(22, 10))
+        plt.subplots_adjust(left=.07, bottom=.1, right=.97, top=.95,
+                            wspace=.3, hspace=.0)
+
+        ax = plt.subplot2grid((2, 3), (0, 0))
+        fig = ax.scatter(self.g.x, self.g.y, c=self.g.met, vmin=8.4, vmax=9.2,
+                         s=10, alpha=0.75, edgecolors='face', marker='o', cmap=self.cmap)
+        cbar = plt.colorbar(fig)
+        cbar.set_ticks(np.arange(8.4, 9.3, .1))
+        cbar.ax.tick_params(labelsize=25)
+        ax.set_xticks([])
+        ax.set_yticks(np.arange(-10, 15, 5))
+        ax.set_ylabel('y (kpc)', fontsize=25)
+        ax.tick_params(axis='y', labelsize=25)
+
+        ax = plt.subplot2grid((2, 3), (0, 1), colspan=2)
+        ax.errorbar(self.g.rad, self.g.met, yerr=self.g.met_u,
+                     marker='.', linestyle='None', color='gray', label='pixels')
+        ax.errorbar(self.g.bin_rad, self.g.bin_met, yerr=self.g.bin_met_u,
+                     marker='o', linestyle='None', color='k', label='annulus averages')
+        ax.legend(loc='lower left')
+        ax.set_xticks([])
+        ax.tick_params(axis='y', labelsize=25)
+        ax.set_ylabel('Metallicity', fontsize=25, labelpad=25)
+        ax.set_xlim(-.2, 14)
+        ax.set_ylim(8.4, 9.2)
+
+        ax = plt.subplot2grid((2, 3), (1, 0))
+        fig = ax.scatter(self.g.x, self.g.y, c=self.g.fluc, vmin=-.5, vmax=.5,
+                         s=10, alpha=0.75, edgecolors='face', marker='o', cmap=self.cmap)
+        cbar = plt.colorbar(fig)
+        cbar.set_ticks(np.arange(-.4, .6, .2))
+        cbar.ax.tick_params(labelsize=25)
+        ax.set_xticks(np.arange(-10, 15, 5))
+        ax.set_yticks(np.arange(-10, 15, 5))
+        ax.set_xlabel('x (kpc)', fontsize=25)
+        ax.set_ylabel('y (kpc)', fontsize=25)
+        ax.tick_params(axis='both', labelsize=25)
+
+        ax = plt.subplot2grid((2, 3), (1, 1), colspan=2)
+        ax.errorbar(self.g.rad, self.g.fluc, yerr=self.g.met_u,
+                     marker='.', linestyle='None', color='gray')
+        ax.axhline(y=0., linestyle='--', color='k')
+        ax.tick_params(axis='both', labelsize=25)
+        ax.set_xlabel('Radius (kpc)', fontsize=25)
+        ax.set_ylabel('Metallicity fluctuation', fontsize=25)
+        ax.set_xlim(-.2, 14)
+        ax.set_ylim(-.5, .5)
+
+        if self.savefig_path is not None:
+            plt.savefig(self.savefig_path + '/fluc_new.pdf')
+
 
 
 
 def analyze(gal_name):
 
-    for diag in config.diag_list:
+    for diag in ['K19N2O2']:#config.diag_list:
         galaxy = Galaxy(gal_name, diag)
         samples = galaxy.samples.reshape(-1)
 
-        
+        '''
         galaxy_figure = GalaxyFigure(galaxy, savefig_path=config.savefigs_path) #
         if samples[0] > 0:
             galaxy_figure.met_map()
             galaxy_figure.met_fluc_corr()
+        '''
         
-        
-        f = open(config.output_path + '/output/total_chain_' + gal_name + '.txt', 'w')
+        f = open(config.output_path + '/output_decom/total_chain_' + gal_name + '_decom.txt', 'w')
         for i in range(len(samples)):
             if i == 0:
                 f.write("%.3f" %(samples[i]))
@@ -384,5 +446,10 @@ def write_corr_scale(gal_name):
                                          1e3*galaxy.corr_scale(thres=.3)))
     f.close()
 
+def write_met_grad(gal_name):
+    galaxy = Galaxy(gal_name, 'K19N2O2')
+    f = open(config.output_path + 'met_grad.csv', 'a+')
+    f.write('%s,%.3f\n' %(gal_name, galaxy.met_grad))
+    f.close()
 
-Galaxy('NGC0873', 'K19N2O2')
+

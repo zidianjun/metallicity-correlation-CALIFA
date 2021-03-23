@@ -18,7 +18,7 @@ def bootstrap(suffix, dh=DataHub(), times=50):
     print np.mean(pr), np.std(pr)
 
 
-suffix = '_adp'
+suffix = '_Ka03'
 lcorr1 = pd.read_csv(config.output_path + '/correlation_length.csv')
 lcorr2 = pd.read_csv(config.output_path + '/correlation_length' + suffix + '.csv')
 
@@ -30,21 +30,25 @@ l2_50, l2_16, l2_84 = lcorr2.l_50[dh.mask], lcorr2.l_16[dh.mask], lcorr2.l_84[dh
 x = np.arange(.01, 10, .01)
 
 plt.subplots(figsize=(10, 10))
+
 ax = plt.subplot(111)
 ax.set_xscale("log")
 ax.set_yscale("log")
-plt.vlines(l1_50, l2_16, l2_84, color='gray')
-plt.hlines(l2_50, l1_16, l1_84, color='gray')
-plt.scatter(l1_50, l2_50, color='k')
-plt.xlabel('$l_{\mathrm{corr}}$ [Kewley line] (kpc)', fontsize=20)
-plt.ylabel('$l_{\mathrm{corr}}$ [Kauffmann line] (kpc)', fontsize=20)
-plt.xticks(fontsize=20)
-plt.yticks(fontsize=20)
-plt.xlim(.06, 10)
-plt.ylim(.06, 10)
-plt.plot(x, x, color='gray', linestyle='--')
+ax.vlines(l1_50, l2_16, l2_84, color='gray')
+ax.hlines(l2_50, l1_16, l1_84, color='gray')
+ax.scatter(l1_50, l2_50, color='k')
+if suffix == '_adp':
+    ax.set_xlabel('$l_{\mathrm{corr}}$ [fixed bin width] (kpc)', fontsize=20)
+    ax.set_ylabel('$l_{\mathrm{corr}}$ [adaptive bin width] (kpc)', fontsize=20)
+else:
+    ax.set_xlabel('$l_{\mathrm{corr}}$ [Kewley line] (kpc)', fontsize=20)
+    ax.set_ylabel('$l_{\mathrm{corr}}$ [Kauffmann line] (kpc)', fontsize=20)
+ax.tick_params(axis='both', labelsize=20)
+ax.set_xlim(.06, 10)
+ax.set_ylim(.06, 10)
+ax.plot(x, x, color='gray', linestyle='--')
+
+
+#bootstrap(suffix)
 plt.savefig(config.savefig_path + suffix + '.pdf')
-
-
-bootstrap(suffix)
 #plt.show()

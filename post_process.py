@@ -6,18 +6,14 @@ import pandas as pd
 import numpy as np
 
 class DataHub(object):
-    def __init__(self,
+    def __init__(self, diag='K19N2O2',
                  basic=read_CALIFA_catalog(),
-                 lcorr=read_CALIFA_catalog(name='correlation_length.csv',
-                                           path=config.output_path),
-                 name_list=read_CALIFA_catalog(name='name_list.csv',
-                                               path=config.obj_path),
-                 PSF=read_CALIFA_catalog(name='PSF.csv',
-                                         path=config.obj_path),
+                 name_list=read_CALIFA_catalog(name='name_list.csv'),
+                 PSF=read_CALIFA_catalog(name='PSF.csv'),
                  cs=read_CALIFA_catalog(name='corr_scale.csv',
                                         path=config.output_path)):
+        self.diag = diag
         self.basic = basic
-        self.lcorr = lcorr
         self.mask = self.basic.name.isin(list(name_list.name))
         self.PSF = PSF
         self.cs = cs
@@ -29,9 +25,12 @@ class DataHub(object):
             return np.array(self.basic[col_name][self.mask])
 
     def corr_len(self):
-        return (np.array(self.lcorr['l_50'][self.mask]),
-                np.array(self.lcorr['l_16'][self.mask]),
-                np.array(self.lcorr['l_84'][self.mask]))
+        suffix = '' if self.diag == 'K19N2O2' else '_' + self.diag
+        lcorr = read_CALIFA_catalog(name='correlation_length' +
+                                    suffix +'.csv', path=config.output_path)
+        return (np.array(lcorr['l_50'][self.mask]),
+                np.array(lcorr['l_16'][self.mask]),
+                np.array(lcorr['l_84'][self.mask]))
 
     def corr_scale(self):
         return (np.array(self.cs['HW50M'][self.mask]),
