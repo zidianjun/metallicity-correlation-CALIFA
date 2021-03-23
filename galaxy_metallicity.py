@@ -408,12 +408,12 @@ def analyze(gal_name):
         galaxy = Galaxy(gal_name, diag)
         samples = galaxy.samples.reshape(-1)
 
-        '''
+        
         galaxy_figure = GalaxyFigure(galaxy, savefig_path=config.savefigs_path) #
         if samples[0] > 0:
             galaxy_figure.met_map()
             galaxy_figure.met_fluc_corr()
-        '''
+        
         
         f = open(config.output_path + '/output_decom/total_chain_' + gal_name + '_decom.txt', 'w')
         for i in range(len(samples)):
