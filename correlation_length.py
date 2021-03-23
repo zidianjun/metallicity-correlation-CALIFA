@@ -14,11 +14,18 @@ def read_output(name, full_chain):
             np.sqrt(np.percentile(L, 16, axis=1)[0]),
             np.sqrt(np.percentile(L, 84, axis=1)[0]))
 
+suffix = ''
+if config.AGN_criterion == 'Kauffmann':
+    suffix = '_Ka03'
+elif config.adp_bin:
+    suffix == '_adp'
+elif config.decomposition == 'MA17':
+    suffix = '_MA17'
 
-f = open(config.output_path + '/correlation_length.csv', 'w')
+f = open(config.output_path + '/correlation_length' + suffix + '.csv', 'w')
 f.write('name,l_50,l_16,l_84\n')
 
-fc = open(config.output_path + '/total_chain_K19N2O2.txt', 'r')
+fc = open(config.output_path + '/total_chain_K19N2O2' + suffix + '.txt', 'r')
 
 for line in fc.readlines():
     name = line[:line.index(' ')]

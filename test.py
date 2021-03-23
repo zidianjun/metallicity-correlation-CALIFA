@@ -5,7 +5,7 @@ from post_process import DataHub
 
 import numpy as np
 import matplotlib.pyplot as plt
-#plt.switch_backend('agg')
+plt.switch_backend('agg')
 from scipy.stats import pearsonr
 
 def bootstrap(dh=DataHub(), times=50):
@@ -51,8 +51,9 @@ ax.tick_params(axis='both', labelsize=20)
 ax.scatter(X0, Y0, color='w', edgecolor='k', s=150)
 ax.vlines(X0, Y_lower0, Y_upper0, color='gray', linewidth=2)
 
-#bootstrap()
 
-#plt.savefig(config.savefig_path + 'beam_size.pdf')
-plt.show()
+bootstrap()
+
+plt.savefig(config.savefig_path + 'beam_size.pdf')
+#plt.show()
 

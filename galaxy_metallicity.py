@@ -74,12 +74,14 @@ class Galaxy(object):
         self.EW = self.eline_data[198].reshape(-1)
 
         PA, b2a, self.distance, PSF, R_25 = (obj_catalog[obj_catalog['name'] == gal_name].values)[0, 2:7]
-        if gal_name in ['NGC0523', 'UGC04245', 'UGC08107', 'UGC09113', 'NGC7364']:
-            pass
-        else:
-            decom = utils.read_CALIFA_catalog(name='decom.csv')
-            ind = (decom.name == gal_name)
-            b2a, _, PA = (decom[decom['name'] == gal_name].values)[0, 1:4]
+
+        if config.decomposition == 'MA17':
+            if gal_name in ['NGC0523', 'UGC04245', 'UGC08107', 'UGC09113', 'NGC7364']:
+                pass
+            else:
+                decom = utils.read_CALIFA_catalog(name='decom.csv')
+                ind = (decom.name == gal_name)
+                b2a, _, PA = (decom[decom['name'] == gal_name].values)[0, 1:4]
 
         ic_y, ic_x = int(self.height / 2), int(self.width / 2)
         c_y, c_x = utils.find_max(FI_data, y_range=(ic_y-7, ic_y+7), x_range=(ic_x-8, ic_x+8))
@@ -104,11 +106,7 @@ class Galaxy(object):
 
             self.bin_rad, self.bin_met, self.bin_met_u = utils.bootstrap(
                 utils.bin_array, (self.met, self.met_u), (self.rad,))
-            '''
-            met_grad, met_grad_u = utils.grad(self.bin_rad, self.bin_met, self.bin_met_u)
-            self.met_grad, self.met_grad_u = met_grad * R_25, met_grad_u * R_25
-            print self.met_grad, self.met_grad_u
-            '''
+            
             self.fluc, self.fluc_u = utils.step(
                 self.rad, self.met, self.met_u,
                 self.bin_rad, self.bin_met, self.bin_met_u)
@@ -211,7 +209,7 @@ class Galaxy(object):
 
 
 class GalaxyFigure(object):
-    def __init__(self, galaxy, savefig_path=None):
+    def __init__(self, galaxy, savefig_path=config.savefig_path):
         self.cmap = plt.cm.get_cmap('RdYlBu_r')
         self.g = galaxy
         '''
@@ -404,18 +402,25 @@ class GalaxyFigure(object):
 
 def analyze(gal_name):
 
-    for diag in ['K19N2O2']:#config.diag_list:
+    for diag in config.diag_list:
         galaxy = Galaxy(gal_name, diag)
         samples = galaxy.samples.reshape(-1)
-
         
         galaxy_figure = GalaxyFigure(galaxy, savefig_path=config.savefigs_path) #
         if samples[0] > 0:
             galaxy_figure.met_map()
             galaxy_figure.met_fluc_corr()
         
+        suffix = ''
+        if config.AGN_criterion == 'Kauffmann':
+            suffix = '_Ka03'
+        elif config.adp_bin:
+            suffix == '_adp'
+        elif config.decomposition == 'MA17':
+            suffix = '_MA17'
         
-        f = open(config.output_path + '/output_decom/total_chain_' + gal_name + '_decom.txt', 'w')
+        f = open(config.output_path + '/output/total_chain_' +
+                 gal_name + suffix + '.txt', 'a+')
         for i in range(len(samples)):
             if i == 0:
                 f.write("%.3f" %(samples[i]))

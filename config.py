@@ -1,7 +1,6 @@
 
 # data path
-proj_path = '/Users/zidianjun/Desktop/lzf/research/met_CALIFA/'
-#proj_path = '/home/liz/project/metallicity/'
+proj_path = './'
 obj_path = proj_path + '/data/'
 fits_path = proj_path + '/data/fits/'
 savefig_path = proj_path + '/figure/'
@@ -26,6 +25,7 @@ min_pix = 500
 q0 = .13  # .13 for CALIFA DR3 thick-disk de-projection
 EW_criterion = -6  # Sanchez
 AGN_criterion = 'Kewley'  # or Kauffmann
+decomposition = 'DR3'
 
 
 # PSF is around 2.5".

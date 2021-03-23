@@ -97,9 +97,6 @@ def merging(ax, mat, dh=DataHub()):
         ax.annotate('%d' %(n[i]), xy=(x[i] + .1, y[i]), xytext=(x[i] + .1, y[i]), fontsize=15)
 
 
-scatter_plot()
-
-'''
 mat = bootstrap(times=2)
 
 plt.figure(figsize=(10, 16))
@@ -111,52 +108,4 @@ ax = plt.subplot(312)
 bar(ax, mat)
 ax = plt.subplot(313)
 merging(ax, mat)
-'''
 
-
-
-'''
-dh = DataHub()
-bar = read_CALIFA_catalog(name='BAR.csv')
-l_50, l_16, l_84 = dh.corr_len()
-
-plt.figure(figsize=(16, 6))
-plt.subplots_adjust(left=.05, bottom=.10, right=.95, top=.98, wspace=.0)
-
-ax = plt.subplot(131)
-ax.set_xscale('log')
-ax.set_yscale('log')
-ax.scatter(bar.Rbarr * 4.848e-3 * dh.col('dist'), l_50)
-ax.vlines(bar.Rbarr * 4.848e-3 * dh.col('dist'), l_16, l_84)
-ax.hlines(l_50, (bar.Rbarr - bar.e_Rbarr) * 4.848e-3 * dh.col('dist'),
-                (bar.Rbarr + bar.e_Rbarr) * 4.848e-3 * dh.col('dist'))
-ax.set_ylabel('Correlation length')
-ax.set_xlabel('R-band bar radius (kpc)')
-ax.set_xlim(1, 40)
-ax.set_ylim(.03, 10)
-
-ax = plt.subplot(132)
-ax.set_xscale('log')
-ax.set_yscale('log')
-ax.scatter(bar.babarr, l_50)
-ax.vlines(bar.babarr, l_16, l_84)
-ax.hlines(l_50, (bar.babarr - bar.e_babarr), (bar.babarr + bar.e_babarr))
-ax.set_xlabel('R-band bar axis ratio')
-ax.set_yticks([])
-ax.set_xlim(5e-2, 2)
-ax.set_ylim(.03, 10)
-
-ax = plt.subplot(133)
-ax.set_xscale('log')
-ax.set_yscale('log')
-ax.scatter(bar.BarTr, l_50)
-ax.vlines(bar.BarTr, l_16, l_84)
-ax.set_xlabel('R-band Bar/Total luminosity ratio')
-ax.set_yticks([])
-ax.set_xlim(-.05, .55)
-ax.set_ylim(.03, 10)
-
-
-plt.savefig(config.savefig_path + 'test.pdf')
-#plt.show()
-'''

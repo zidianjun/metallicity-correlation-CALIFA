@@ -61,41 +61,6 @@ def hist2d(ax, xdata, ydata, x_range, y_range=(-1.4, 1, 20)):
 
 
 
-
-def scatter_test(diag='K19N2O2'):
-    dh = DataHub(diag=diag)
-    l_50, l_16, l_84 = dh.corr_len()
-    radius = dh.col('R_25')
-
-    plt.figure(figsize=(16, 9))
-    plt.subplots_adjust(left=.10, bottom=.12, right=.98, top=.94, wspace=.0)
-
-    ax = plt.subplot(121)
-    ax.set_xscale("log")
-    ax.set_yscale("log")
-    ax.scatter(10 ** dh.col('Mass'), l_50 / radius, color='w', edgecolor='k', s=50)
-    ax.vlines(10 ** dh.col('Mass'), l_16 / radius, l_84 / radius, color='gray')
-    ax.hlines(l_50 / radius, 10 ** (dh.col('Mass') - dh.col('error_Mass')),
-                             10 ** (dh.col('Mass') + dh.col('error_Mass')), color='gray')
-    ax.set_xlabel("Stellar mass (M$_{\odot}$)", fontsize=25)
-    ax.set_ylabel("Normalised correlation length", fontsize=25)
-    ax.tick_params(axis='both', labelsize=25)
-    ax.set_xlim(1e9, 5e11)
-    ax.set_ylim(4e-3, 1)
-
-    ax = plt.subplot(122)
-    ax.set_xscale("log")
-    ax.set_yscale("log")
-    ax.scatter(dh.col('lSFR'), l_50 / radius, color='w', edgecolor='k', s=50)
-    ax.vlines(dh.col('lSFR'), l_16 / radius, l_84 / radius, color='gray')
-    ax.hlines(l_50 / radius, dh.col('lSFR') - dh.col('error_SFR'),
-                             dh.col('lSFR') + dh.col('error_SFR'), color='gray')
-    ax.set_xlabel("SFR (M$_{\odot}$ yr$^{-1}$)", fontsize=25)
-    ax.set_yticks([])
-    ax.tick_params(axis='both', labelsize=25)
-    ax.set_xlim(6e-2, 40)
-    ax.set_ylim(4e-3, 1)
-
 def ebar(log_e_arr_low, log_e_arr_upp, c, perc):
     return c * (10 ** np.abs([[np.percentile(log_e_arr_low, perc)],
                 [np.percentile(log_e_arr_upp, perc)]]) - 1)
