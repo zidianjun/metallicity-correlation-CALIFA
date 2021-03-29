@@ -26,12 +26,10 @@ Manual:
   
     4.5. Use the function thres_func() in main.py to get the "*galaxy_name*\_thres.csv" files. Run "python thres.py" to get Fig. 6.
     
-    4.6. Run "python test.py", "python corner.py", "python density.py", "python vel_disp.py", and "python morph.py" to get Fig. 7 - 11.
+    4.6. Run "python test.py", "python corner.py", "python density.py", "python vel_disp.py", "python morph.py", and "python corr_scale.py" to get Fig. 7 - 12.
     
-    4.7. Use the function write_corr_scale() in main.py to get the "corr_scale.csv" file in ./output. Run "python corr_scale.py" to get Fig. 12.
+    4.7. Set AGN_criterion = 'Kauffmann' and redo Step 1 - 3 to get the "correlation_length_Ka03.csv" file in ./output. Run "python lc_vs_lc.py --suffix='Ka03' " to get Fig. A1.
     
-    4.8. Set AGN_criterion = 'Kauffmann' and redo Step 1 - 3 to get the "correlation_length_Ka03.csv" file in ./output. Run "python lc_vs_lc.py --suffix='Ka03' " to get Fig. A1.
-    
-    4.9. Set decomposition = 'decom' and redo Step 1 - 3 to get the "correlation_length_MA17.csv" file in ./output. Run "python lc_vs_lc.py --suffix='MA17' " to get Fig. B1. Run "python decom.py" to get Fig. B2.
+    4.8. Set decomposition = 'decom' and redo Step 1 - 3 to get the "correlation_length_MA17.csv" file in ./output. Run "python lc_vs_lc.py --suffix='MA17' " to get Fig. B1. Run "python decom.py" to get Fig. B2.
      
-    4.10. Set adp_bin = True and redo Step 1 - 3 to get the "correlation_length_adp.csv" file in ./output. Run "python lc_vs_lc.py --suffix='adp' " to get Fig. C1.
+    4.9. Set adp_bin = True and redo Step 1 - 3 to get the "correlation_length_adp.csv" file in ./output. Run "python lc_vs_lc.py --suffix='adp' " to get Fig. C1.
