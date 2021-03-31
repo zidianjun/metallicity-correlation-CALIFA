@@ -19,10 +19,7 @@ def KT18_model(x_array, sigma, x0, KappaTstar):
     for x in x_array:
         alpha = (sigma ** 2 / 2 + x0 ** 2) / x ** 2
         beta = 2 * KappaTstar / x ** 2
-        if -12 < np.log(alpha) < 6 and -12 < np.log(beta) < 14:
-            res.append(KT18(alpha, beta))
-        else:
-            res.append(np.inf)
+        res.append(KT18(alpha, beta))
     return np.array(res)
 
 def log_likelihood(theta, x, y, yerr):

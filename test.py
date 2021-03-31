@@ -10,18 +10,18 @@ from scipy.stats import pearsonr
 
 def bootstrap(dh=DataHub(), times=50):
     pr = []
-    x = (dh.col('FWHM') / np.sqrt(np.log(256)) /
+    x = (dh.col('PSF') / np.sqrt(np.log(256)) /
          np.sqrt((dh.col('b2a') ** 2 - config.q0 ** 2) / (1 - config.q0 ** 2)))
     for i in range(times):
         y = dh.rand_corr_len() / dh.col('dist') / constant.kpc_per_Mpc
         pr.append(pearsonr(np.log10(x), np.log10(y))[0])
-        print(i)
+        #print(i)
     print(np.mean(pr), np.std(pr))
 
 
 dh = DataHub()
 
-X0 = (dh.col('FWHM') / np.sqrt(np.log(256)) / 
+X0 = (dh.col('PSF') / np.sqrt(np.log(256)) / 
      np.sqrt((dh.col('b2a') ** 2 - config.q0 ** 2) / (1 - config.q0 ** 2)))
 Y, Y_lower, Y_upper = dh.corr_len()
 

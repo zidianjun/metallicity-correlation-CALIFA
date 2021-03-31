@@ -56,14 +56,14 @@ class Galaxy(object):
     Metallicity calculation, two-point correlation function and MCMC model
         are already included in the __init__ function.
     '''
-    def __init__(self, gal_name, diag,
+    def __init__(self, gal_name, diag, obj_catalog=utils.read_CALIFA_catalog(),
                  min_pix=config.min_pix, min_SN=config.min_SN):
         time0 = time.time()
         print("Start analyzing " + gal_name + " with " + diag + " diagnostics.")
 
         self.name = gal_name
         self.min_pix, self.min_SN = min_pix, min_SN
-        obj_catalog = utils.read_CALIFA_catalog()
+        
         Pipe3D = fits.open(config.fits_path + gal_name + '.Pipe3D.cube.fits')
         self.eline_data = Pipe3D[3].data
         channel, self.height, self.width = self.eline_data.shape
@@ -82,6 +82,7 @@ class Galaxy(object):
                 decom = utils.read_CALIFA_catalog(name='decom.csv')
                 ind = (decom.name == gal_name)
                 b2a, _, PA = (decom[decom['name'] == gal_name].values)[0, 1:4]
+                PA += 90
 
         ic_y, ic_x = int(self.height / 2), int(self.width / 2)
         c_y, c_x = utils.find_max(FI_data, y_range=(ic_y-7, ic_y+7), x_range=(ic_x-8, ic_x+8))
@@ -104,15 +105,17 @@ class Galaxy(object):
             self.x, self.y = X[mask] * self.kpc_per_pix, Y[mask] * self.kpc_per_pix
             self.rad = np.sqrt(self.x ** 2 + self.y ** 2)
 
+            bin_size = min(config.fixed_bin_size, self.kpc_per_pix)
+
             self.bin_rad, self.bin_met, self.bin_met_u = utils.bootstrap(
-                utils.bin_array, (self.met, self.met_u), (self.rad,))
+                utils.bin_array, (self.met, self.met_u), (self.rad, bin_size))
             
             self.fluc, self.fluc_u = utils.step(
                 self.rad, self.met, self.met_u,
                 self.bin_rad, self.bin_met, self.bin_met_u)
 
             self.bin_dist, self.bin_ksi, self.bin_ksi_u = utils.bootstrap(
-                utils.two_point_correlation, (self.fluc, self.fluc_u), (self.x, self.y))
+                utils.two_point_correlation, (self.fluc, self.fluc_u), (self.x, self.y, bin_size))
             
             self.samples, self.par = MCMC(self.bin_dist, self.bin_ksi, self.bin_ksi_u, self.beam)
 
@@ -233,7 +236,7 @@ class GalaxyFigure(object):
         plt.yticks(fontsize=30)
 
         if self.savefig_path is not None:
-            plt.savefig(self.savefig_path + '/' + self.g.name + '_' + self.g.diag + '_met_map.pdf')
+            plt.savefig(self.savefig_path + self.g.name + '_' + self.g.diag + '_met_map.pdf')
 
         plt.subplots(figsize=(12, 9))
         fig = plt.scatter(self.g.x, self.g.y, c=self.g.met_u,
@@ -249,7 +252,7 @@ class GalaxyFigure(object):
         plt.yticks(fontsize=15)
 
         if self.savefig_path is not None:
-            plt.savefig(self.savefig_path + '/' + self.g.name + '_' + self.g.diag + '_met_u_map.pdf')
+            plt.savefig(self.savefig_path + self.g.name + '_' + self.g.diag + '_met_u_map.pdf')
 
     def met_fluc(self):
         fig, axes = plt.subplots(2, figsize=(24, 12), sharex=True)
@@ -272,7 +275,7 @@ class GalaxyFigure(object):
         ax.set_ylim(-.5, .5)
 
         if self.savefig_path is not None:
-            plt.savefig(self.savefig_path + '/' + self.g.name + '_' + self.g.diag + '_met_fluc.pdf')
+            plt.savefig(self.savefig_path + self.g.name + '_' + self.g.diag + '_met_fluc.pdf')
 
         plt.subplots(figsize=(12, 9))
         max_range = max(abs(min(self.g.fluc)), abs(max(self.g.fluc))) * 1.05
@@ -289,7 +292,7 @@ class GalaxyFigure(object):
         plt.yticks(fontsize=30)
 
         if self.savefig_path is not None:
-            plt.savefig(self.savefig_path + '/' + self.g.name + '_' + self.g.diag + '_met_fluc_map.pdf')
+            plt.savefig(self.savefig_path + self.g.name + '_' + self.g.diag + '_met_fluc_map.pdf')
 
     def met_fluc_corr(self):
         plt.subplots(figsize=(8, 4))
@@ -315,7 +318,7 @@ class GalaxyFigure(object):
         plt.annotate(self.g.name, xy=(2.7, .8), xytext=(2.7, .8), fontsize=15)
 
         if self.savefig_path is not None:
-            plt.savefig(self.savefig_path + '/' + self.g.name + '_' + self.g.diag + '_2p_corr.pdf')
+            plt.savefig(self.savefig_path + self.g.name + '_' + self.g.diag + '_2p_corr.pdf')
 
     def mcmc_plot(self):
         plt.subplots(figsize=(8, 4))
@@ -341,7 +344,7 @@ class GalaxyFigure(object):
         plt.annotate(self.g.name, xy=(2.7, .8), xytext=(2.7, .8), fontsize=15)
 
         if self.savefig_path is not None:
-            plt.savefig(self.savefig_path + '/' + self.g.name + '_' + self.g.diag + '_curves.pdf')
+            plt.savefig(self.savefig_path + self.g.name + '_' + self.g.diag + '_curves.pdf')
 
     def example(self):
         plt.figure(figsize=(22, 10))
@@ -400,9 +403,11 @@ class GalaxyFigure(object):
 
 
 def analyze(gal_name):
+    obj_catalog = utils.read_CALIFA_catalog()
+    ID = int(obj_catalog[obj_catalog.name == gal_name].ID)
 
     for diag in config.diag_list:
-        galaxy = Galaxy(gal_name, diag)
+        galaxy = Galaxy(gal_name, diag, obj_catalog=obj_catalog)
         samples = galaxy.samples.reshape(-1)
         
         galaxy_figure = GalaxyFigure(galaxy, savefig_path=config.savefigs_path) #
@@ -418,16 +423,22 @@ def analyze(gal_name):
         elif config.decomposition == 'MA17':
             suffix = '_MA17'
         
-        f = open(config.output_path + '/output/total_chain_' +
+        chain = open(config.output_path + '/output/total_chain_' +
                  gal_name + suffix + '.txt', 'a+')
         for i in range(len(samples)):
             if i == 0:
-                f.write("%.3f" %(samples[i]))
+                chain.write("%.3f" %(samples[i]))
             else:
-                f.write(" %.3f" %(samples[i]))
-        f.write("\n")
-        f.close()
-        
+                chain.write(" %.3f" %(samples[i]))
+        chain.write("\n")
+        chain.close()
+
+        if suffix == '' and diag == 'K19N2O2':
+            cs = open(config.output_path + 'corr_scale.csv', 'a+')
+            cs.write('%d,%s,%.0f,%.0f\n' %(ID, gal_name,
+                      1e3*galaxy.corr_scale(thres=.5), 1e3*galaxy.corr_scale(thres=.3)))
+            cs.close()
+
 
 def thres_func(par_tup):
     min_SN, min_pix, name = par_tup
@@ -437,23 +448,8 @@ def thres_func(par_tup):
         f.write('%s,%.3f,%.3f,%.3f\n' %(name, min_SN, min_pix, par[2]))
         f.close()
 
-def plot(gal_name):
-    galaxy = Galaxy(gal_name, 'K19N2O2')
-    galaxy_figure = GalaxyFigure(galaxy, savefig_path=config.savefig_path+'/examples/') #
-    galaxy_figure.met_fluc_corr()
-    galaxy_figure.mcmc_plot()
 
-def write_corr_scale(gal_name):
-    galaxy = Galaxy(gal_name, 'K19N2O2')
-    f = open(config.output_path + 'corr_scale.csv', 'a+')
-    f.write('%s,%.0f,%.0f\n' %(gal_name, 1e3*galaxy.corr_scale(thres=.5),
-                                         1e3*galaxy.corr_scale(thres=.3)))
-    f.close()
 
-def write_met_grad(gal_name):
-    galaxy = Galaxy(gal_name, 'K19N2O2')
-    f = open(config.output_path + 'met_grad.csv', 'a+')
-    f.write('%s,%.3f\n' %(gal_name, galaxy.met_grad))
-    f.close()
+
 
 

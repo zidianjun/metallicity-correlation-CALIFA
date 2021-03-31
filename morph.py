@@ -10,7 +10,7 @@ def bootstrap(dh=DataHub(), times=50):
     mat = []
     for i in range(times):
         mat.append(dh.rand_corr_len())
-        print(i)
+        #print(i)
     return np.array(mat)
 
 def mean_std(mat, mask):
@@ -108,4 +108,7 @@ ax = plt.subplot(312)
 bar(ax, mat)
 ax = plt.subplot(313)
 merging(ax, mat)
+
+plt.savefig(config.savefig_path + 'morph.pdf')
+#plt.show()
 

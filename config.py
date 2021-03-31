@@ -18,6 +18,7 @@ diag_list = ['PPN2', 'PPO3N2', 'K19N2O2']
 
 # adaptive bin width
 adp_bin = False
+fixed_bin_size = .2  # kpc
 
 # galaxy properties
 min_SN = 2.

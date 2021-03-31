@@ -19,7 +19,7 @@ def bootstrap(d1, d2, times=20):
         l2 = dh.rand_corr_len(diag=d2)
         ydata = np.append(ydata, l2)
         pr.append(pearsonr(np.log10(l1), np.log10(l2))[0])
-        print(i)
+        #print(i)
     print(np.mean(pr), np.std(pr))
     return xdata, ydata
 

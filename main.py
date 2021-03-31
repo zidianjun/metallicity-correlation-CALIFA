@@ -1,19 +1,25 @@
 
-from galaxy_metallicity import analyze, thres_func, write_corr_scale
+from galaxy_metallicity import analyze, thres_func
 from utils import read_CALIFA_catalog
 import config
 
 import multiprocessing
 
 if __name__ == '__main__':
-
+    
+    cs = open(config.output_path + 'corr_scale.csv', 'a+')
+    cs.write("ID,name,HW50M,HW30M\n")
+    cs.close()
+    
     name_list = read_CALIFA_catalog().name
     #name_list = ['NGC0257', 'NGC0776', 'NGC0873', 'NGC1659']  # examples
     cores = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=cores)
     pool.map(analyze, name_list)
     
-    #pool.map(write_corr_scale, name_list)
+    cs = read_CALIFA_catalog(name='corr_scale.csv', path=config.output_path)
+    cs.sort_values(by='ID').to_csv(config.output_path + 'corr_scale.csv')
+
 
     '''
     tuple_list = []

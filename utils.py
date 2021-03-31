@@ -45,7 +45,7 @@ def deproject(height, width, y_c, x_c, PA, b2a, q0=config.q0):
     Deproject the galaxy coordinates using rotation matrix.
     '''
     cosi = np.sqrt((b2a ** 2 - q0 ** 2) / (1 - q0 ** 2)) if b2a > q0 else 0.
-    theta = (PA + 90) * np.pi / 180
+    theta = PA * np.pi / 180
     dep_mat = np.array([[np.cos(theta), np.sin(theta)],
                         [-np.sin(theta) / cosi, np.cos(theta) / cosi]])
     
@@ -58,7 +58,7 @@ def deproject(height, width, y_c, x_c, PA, b2a, q0=config.q0):
 # ========== utils for 1d np arrays ==========
 
 
-def bin_array(f, r, bin_size=.2, adp=config.adp_bin): # phase=0
+def bin_array(f, r, bin_size, adp=config.adp_bin): # phase=0
     if adp:
         hist, bin_edge = np.histogram(r, bins='auto')
     else:
@@ -79,7 +79,7 @@ def step(rad, met, met_u, bin_rad, bin_met, bin_met_u):
     fluc_u = np.sqrt(met_u ** 2 + bin_met_u[y] ** 2)
     return fluc, fluc_u
 
-def two_point_correlation(f, x, y, bin_size=.015, max_kpc=4.):
+def two_point_correlation(f, x, y, bin_size, max_kpc=4.):
     SCORR = np.outer(f, f)
     DX, DY = np.subtract.outer(x, x), np.subtract.outer(y, y)
     DIST = np.sqrt(DX ** 2 + DY ** 2)

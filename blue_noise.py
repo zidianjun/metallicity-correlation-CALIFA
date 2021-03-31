@@ -2,8 +2,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from cv2 import GaussianBlur
+
+import config
 from utils import two_point_correlation
-import constant
 
 def gen_blue_noise(mask, kpc_per_pix, beam, height=73, width=78, fsc=5):
     '''
@@ -17,7 +18,8 @@ def gen_blue_noise(mask, kpc_per_pix, beam, height=73, width=78, fsc=5):
     y, x = np.meshgrid(np.arange(height), np.arange(width))
     return (noise.reshape(-1)[mask],
     	    x.reshape(-1)[mask] * kpc_per_pix,
-    	    y.reshape(-1)[mask] * kpc_per_pix)
+    	    y.reshape(-1)[mask] * kpc_per_pix,
+            min(config.fixed_bin_size, kpc_per_pix))
 
 def gen_blue_noise_band(mask, kpc_per_pix, beam, height=73, width=78, times=10):
     ksi_b = None

@@ -9,15 +9,13 @@ plt.switch_backend('agg')
 
 def corr_scale_plot(dh=DataHub()):
 
-    plt.figure(figsize=(20, 8))
-    plt.subplots_adjust(left=.05, bottom=.12, right=.93, top=.94, wspace=.2)
+    plt.figure(figsize=(10, 16))
+    plt.subplots_adjust(left=.12, bottom=.08, right=.90, top=.95, hspace=.25)
 
     HW50M, HW30M = dh.corr_scale()
     corr_len = dh.corr_len()[0]
 
-    mask = (dh.col('Mass') > 9.6) & (dh.col('Mass') < 10.6)
-
-    ax = plt.subplot(121)
+    ax = plt.subplot(211)
     ax.set_xscale("log")
 
     ax.hist(HW30M, bins=10 ** np.arange(2, 4, .2),
@@ -52,7 +50,7 @@ def corr_scale_plot(dh=DataHub()):
     ax.legend(loc='upper right', prop={'size': 15})
 
 
-    ax = plt.subplot(122)
+    ax = plt.subplot(212)
     ax.set_xscale("log")
     ax.set_yscale("log")
     dh = DataHub()
@@ -61,7 +59,7 @@ def corr_scale_plot(dh=DataHub()):
                               [14.2, 6.3, 10.7, 9.4, 15.7, 12.2, 18.8, 8.7],
                c=np.log10([360, 710, 760, 510, 820, 740, 550, 510]),
                s=200, marker='D', edgecolor='k', cmap=plt.cm.get_cmap('RdYlBu_r'))
-    fig = ax.scatter(10 ** dh.col('Mass'), dh.col('R_25'), c=np.log10(dh.cs.HW30M[dh.mask]),
+    fig = ax.scatter(10 ** dh.col('Mass'), dh.col('R_25'), c=np.log10(dh.cs.HW30M),
                       s=100, edgecolor='k', cmap=plt.cm.get_cmap('RdYlBu_r'))
     cbar = plt.colorbar(fig, ticks=np.log10([200, 400, 600, 800, 1000]))
     cbar.ax.tick_params(labelsize=25)

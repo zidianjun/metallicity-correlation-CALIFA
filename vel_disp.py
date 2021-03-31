@@ -12,8 +12,7 @@ corr_len = read_CALIFA_catalog(name='correlation_length.csv',
            path=config.output_path)
 
 CO_data = read_CALIFA_catalog(
-          name='EDGE_CO_VelDisp_Gaussian_BeamSmearingCorrected_Masked.csv',
-          path=config.obj_path + '/CALIFA/')
+          name='EDGE_CO_VelDisp_Gaussian_BeamSmearingCorrected_Masked.csv')
 
 name_list = list(corr_len.name)
 
@@ -35,39 +34,30 @@ for name in CO_data.Name:
         y_16.append(corr_len[corr_len.name == name].values[0, 2])
         y_84.append(corr_len[corr_len.name == name].values[0, 3])
 
-        c.append((CALIFA_data[CALIFA_data.name == name].values[0, 14])) # 7: Mass, 9: SFR
 
 plt.subplots(figsize=(10, 10))
 ax = plt.subplot(111)
 ax.set_yscale("log")
-plt.scatter(x_50, y_50, color='w', edgecolor='k', s=100)
-#fig = plt.scatter(x_50, y_50, c=c, s=100, cmap=plt.cm.get_cmap('RdYlBu_r'))
-#cbar = plt.colorbar(fig)
-#cbar.set_label('log stellar mass (M$_{\odot}$)', size=20)
-#cbar.ax.tick_params(labelsize=20)
-plt.vlines(x_50, y_16, y_84, color='gray')
-plt.hlines(y_50, x_16, x_84, color='gray')
+ax.scatter(x_50, y_50, color='w', edgecolor='k', s=100)
+ax.vlines(x_50, y_16, y_84, color='gray')
+ax.hlines(y_50, x_16, x_84, color='gray')
 
 x = np.arange(0, 40, .1)
-plt.plot(x, np.sqrt(1e-3/3*400*x*3), color='k', linestyle='--',
+ax.plot(x, np.sqrt(1e-3/3*400*x*3), color='k', linestyle='--',
          label='scale height = 400pc, SF duration = 3Gyr')
-plt.plot(x, np.sqrt(1e-3/3*180*x*2), color='k', linestyle='-.',
+ax.plot(x, np.sqrt(1e-3/3*180*x*2), color='k', linestyle='-.',
          label='scale height = 180pc, SF duration = 2Gyr')
-plt.plot(x, np.sqrt(1e-3/3*80*x*1), color='k', linestyle=':',
+ax.plot(x, np.sqrt(1e-3/3*80*x*1), color='k', linestyle=':',
          label='scale height = 80pc,   SF duration = 1Gyr')
-plt.legend(loc='upper left', prop={'size': 15})
-#plt.annotate('scale length = 250pc\nSF duration = 5Gyr', xy=(30, 4), xytext=(30, 4))
-#plt.annotate('scale length = 50pc\nSF duration = 5Gyr', xy=(30, 2), xytext=(30, 2))
-#plt.annotate('scale length = 50pc\nSF duration = 1Gyr', xy=(30, .8), xytext=(30, .8))
+ax.legend(loc='upper left', prop={'size': 15})
 
 
-plt.xlim(0, 40)
-plt.ylim(0.1, 10)
+ax.set_xlim(0, 40)
+ax.set_ylim(0.1, 10)
 
-plt.xlabel('CO velocity dispersion (km s$^{-1}$)', fontsize=20)
-plt.ylabel('Correlation length (kpc)', fontsize=20)
-plt.xticks(fontsize=20)
-plt.yticks(fontsize=20)
+ax.set_xlabel('CO velocity dispersion (km s$^{-1}$)', fontsize=20)
+ax.set_ylabel('Correlation length (kpc)', fontsize=20)
+ax.tick_params(axis='both', labelsize=20)
 
 
 plt.savefig(config.savefig_path + 'vel_disp.pdf')

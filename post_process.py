@@ -8,19 +8,14 @@ import numpy as np
 class DataHub(object):
     def __init__(self, diag='K19N2O2',
                  basic=read_CALIFA_catalog(),
-                 PSF=read_CALIFA_catalog(name='PSF.csv'),
                  cs=read_CALIFA_catalog(name='corr_scale.csv',
                                         path=config.output_path)):
         self.diag = diag
         self.basic = basic
-        self.PSF = PSF
         self.cs = cs
 
     def col(self, col_name):
-        if col_name == 'FWHM':
-            return np.array(self.PSF.FWHM)
-        else:
-            return np.array(self.basic[col_name])
+        return np.array(self.basic[col_name])
 
     def corr_len(self):
         suffix = '' if self.diag == 'K19N2O2' else '_' + self.diag
