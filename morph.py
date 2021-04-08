@@ -97,7 +97,7 @@ def merging(ax, mat, dh=DataHub()):
         ax.annotate('%d' %(n[i]), xy=(x[i] + .1, y[i]), xytext=(x[i] + .1, y[i]), fontsize=15)
 
 
-mat = bootstrap(times=2)
+mat = bootstrap(times=50)
 
 plt.figure(figsize=(10, 16))
 plt.subplots_adjust(left=.15, bottom=.08, right=.95, top=.98, hspace=.3)
