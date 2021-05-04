@@ -18,13 +18,13 @@ lcorr_mat = np.zeros((2, len(pix_list), len(SN_list), 3))
 
 for i, pix in enumerate(pix_list):
     for j, SN in enumerate(SN_list):
-        temp = thres0873[(thres0873.pix == pix) & (thres0873.SN == SN)].lcorr
+        temp = thres0873[(thres0873[2] == pix) & (thres0873[1] == SN)].lcorr
         x, dx = np.median(temp), np.std(temp) / np.sqrt(len(temp))
         median, ste = np.sqrt(x), 1./2/np.sqrt(x) * dx
         lcorr_mat[0, i, j, 0] = median
         lcorr_mat[0, i, j, 1] = max(0, median - ste)
         lcorr_mat[0, i, j, 2] = median + ste
-        temp = thres0237[(thres0237.pix == pix) & (thres0237.SN == SN)].lcorr
+        temp = thres0237[(thres0237[2] == pix) & (thres0237[1] == SN)].lcorr
         x, dx = np.median(temp), np.std(temp) / np.sqrt(len(temp))
         median, ste = np.sqrt(x), 1./2/np.sqrt(x) * dx
         lcorr_mat[1, i, j, 0] = median
